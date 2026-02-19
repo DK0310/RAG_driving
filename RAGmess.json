@@ -1,0 +1,2599 @@
+{
+  "name": "RAGmess",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "e593c452-d1e1-47ab-b982-649138fac915",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1440,
+        1540
+      ],
+      "id": "c507ca4f-6cab-4129-b58e-a17f353ed2b3",
+      "name": "Messenger",
+      "webhookId": "e593c452-d1e1-47ab-b982-649138fac915"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v23.0/783233704876382/messages/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAkttpAZAZBu4BPpxf2CNQH7VIWA9jsXOw49yA36FtCsiTOqHOema4k9KoHaonv6475iOwxq3MmC7pzcHQobE1BzCAPcETno23EWTDbCoXFdQyugsY4X3WFbKAwKyC2UNZAnqI8aQYis5R3L2lUyNcyFmcPfIIFc9igjMZADgkcvuc1ZA8PbrU7zQ16FYEM0LlyNe7vvHIekuXKQ3ibDNZB3NvwTSne1cwFqkrxGQZD"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3460,
+        1160
+      ],
+      "id": "8fb7df53-2cf6-4576-b3df-9e5755950c80",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v23.0/783233704876382/messages/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAkttpAZAZBu4BPkYmTNDQEgi188XZCRRSeuisCpGtv8KJoN1tcnyrv7cz2PGIzvDMgxlXJ4bg9v1bgEZClUgnv18VtK1q8xKWvvFDsitEaqUfYY119o2nzFpbNJZBi0uyGcBOeSZCkRDJlT1hHiYz1w6rtiUqW8tqN4owJZAdIGvzZCoJfNdYCEql2tZC4l1m53GP9sw"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({ messaging_type: \"RESPONSE\", recipient: { id: String($('Messenger').item.json.body.entry[0].messaging[0].sender.id) }, message: { text: String($json.content) } }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4940,
+        1440
+      ],
+      "id": "f387fcdc-76a4-4678-863d-f0dac84479cc",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -1120,
+        1360
+      ],
+      "id": "ef29b8d6-8db0-43bd-95d5-362ce7c677c8",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3040,
+        1140
+      ],
+      "id": "b8d26db0-cfd3-4a8b-bbcf-f3876b1bd585",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4400,
+        1420
+      ],
+      "id": "a4f872e1-bf86-49f0-8f7e-963baf311136",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "1L4CjYtplaWOp6gC",
+          "mode": "list",
+          "cachedResultName": "read_drive_folder"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "max_files": 0
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "folder_id",
+              "displayName": "folder_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "max_files",
+              "displayName": "max_files",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2420,
+        1440
+      ],
+      "id": "defafcbe-4182-4df6-9780-edb631b7b60b",
+      "name": "Cập nhật dữ liệu"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = {\n  \"recipient\":{\n    \"id\": `${$('Messenger').first().json.body.entry[0].messaging[0].sender.id}`\n  },\n  \"message\":{\n    \"text\": `${$input.first().json.output[0].text}`\n  }\n}\n    return{data:body}\n\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4000,
+        1400
+      ],
+      "id": "8a85d70f-2c1f-4777-9fbb-259c12a8aa57",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = {\n  \"recipient\":{\n    \"id\": `${$('Refresh1').first().json['id user']}`\n  },\n  \"message\":{\n    \"text\": `${$input.first().json.output}`\n  }\n}\n    return{data:body}\n\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2660,
+        1180
+      ],
+      "id": "fb874fce-2b7d-4f83-b310-997d37e16dfc",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['tin nhắn'] }}",
+        "options": {
+          "systemMessage": "#Role\nrole: assistant\nname: Radi chatbot\ndescription:\nYou are an AI chatbot that specializes in supporting students in learning driving theory in Vietnamese.\n\n#TOOL\ntools:\nname: Cập nhật dữ liệu\ndescription:\nThis is a tool to update data when the user enters a new file.\n\nname: Update data\ndescription:\nThis file contains details on how to communicate with the user as a driving theory learning assistant and process human natural language.\n\n\n#TRIGGER KEYWORDS\nTrigger Phrases:\n“cập nhật dữ liệu\"\n\"Cập nhật dữ liệu\"\n\n\n#Response rules\nbehavior:\nMust call Cập nhật dữ liệu tool, Update data at any time to get information to respond to users\nPlease response: \"Dữ liệu của bạn đã được cập nhật!\".\nIf the user answers unrelated to driving theory -> reply: \" Mình là trợ lý AI hỗ trợ học lý thuyết lái xe, hiện tại mình chỉ hỗ trợ trong khoảng thời gian này thôi, nếu bạn có câu hỏi gì liên quan về lý thuyết lái xe thì cứ hỏi mình nhé\".\n\n#Response format\nresponse style:\nFriendly reply. short, in Vietnamese.\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        2180,
+        1180
+      ],
+      "id": "9f241c85-05fd-4e30-9747-7dee5bece5f5",
+      "name": "AI Agent3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "13c27617-d944-4df0-89c9-c2499e1a9b66",
+              "name": "id user",
+              "value": "={{ $('If1').item.json.body.entry[0].messaging[0].sender.id }}",
+              "type": "string"
+            },
+            {
+              "id": "1e9adbb3-f5c4-459c-a695-411f915515b7",
+              "name": "id page",
+              "value": "={{ $('If1').item.json.body.entry[0].messaging[0].recipient.id }}",
+              "type": "string"
+            },
+            {
+              "id": "ea4703b8-d8c1-4972-bde7-90d9200ec883",
+              "name": "tin nhắn",
+              "value": "={{ $('If1').item.json.body.entry[0].messaging[0].message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1880,
+        1340
+      ],
+      "id": "f6b2d5ce-cdd1-4f04-8ff9-2695627563c2",
+      "name": "Refresh"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "13c27617-d944-4df0-89c9-c2499e1a9b66",
+              "name": "id user",
+              "value": "={{ $('Messenger').item.json.body.entry[0].messaging[0].sender.id }}",
+              "type": "string"
+            },
+            {
+              "id": "1e9adbb3-f5c4-459c-a695-411f915515b7",
+              "name": "id page",
+              "value": "={{ $('Messenger').item.json.body.entry[0].messaging[0].recipient.id }}",
+              "type": "string"
+            },
+            {
+              "id": "ea4703b8-d8c1-4972-bde7-90d9200ec883",
+              "name": "tin nhắn",
+              "value": "={{ $('Messenger').item.json.body.entry[0].messaging[0].message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1680,
+        1680
+      ],
+      "id": "8432025d-a0d2-443c-a819-231a196543d4",
+      "name": "None Refresh"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "13c27617-d944-4df0-89c9-c2499e1a9b66",
+              "name": "id user",
+              "value": "={{ $('If1').item.json.body.entry[0].messaging[0].sender.id }}",
+              "type": "string"
+            },
+            {
+              "id": "1e9adbb3-f5c4-459c-a695-411f915515b7",
+              "name": "id page",
+              "value": "={{ $('If1').item.json.body.entry[0].messaging[0].recipient.id }}",
+              "type": "string"
+            },
+            {
+              "id": "ea4703b8-d8c1-4972-bde7-90d9200ec883",
+              "name": "tin nhắn",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -520,
+        1580
+      ],
+      "id": "d33b1ea1-d5f2-408e-9b00-296cd087d015",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "da9fcb64-8d7e-433a-9fc1-7f0459f5bad9",
+              "leftValue": "={{ $json.body.entry[0].messaging[0].message.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1140,
+        1600
+      ],
+      "id": "68f6ed9c-3e77-45c7-a5cb-52869bdddb95",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "574ae771-81e4-4157-90e8-abd5d95a29a1",
+              "leftValue": "={{ $('Messenger').item.json.body.entry[0].messaging[0].message.text }}",
+              "rightValue": "=cập nhật dữ liệu",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        980,
+        1580
+      ],
+      "id": "00edebf8-8cd5-4e84-8f80-29c53c039345",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1dRoFReEACvNpTuZ2S-xTqlKLne8DGO1u7K8zcuwcjQM/edit?tab=t.0",
+        "simple": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Simplify', ``, 'boolean') }}"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        2500,
+        2020
+      ],
+      "id": "f3c8ee36-7ccd-4cbb-a533-9bff027b47dd",
+      "name": "Interaction Rules1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "Gc3QzQZ7HenXzkoo",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        2020
+      ],
+      "id": "ed68da9f-fdd6-43b8-ad33-df4551dbd9a0",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3DktBr4cKLLJgYj1",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4b6fa925-b015-4060-8bd6-aa63261ab8d5",
+              "leftValue": "={{ $json.output[0].text }}",
+              "rightValue": "https?://[^\\s\"']+",
+              "operator": {
+                "type": "string",
+                "operation": "notRegex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3360,
+        1600
+      ],
+      "id": "72d9675e-11ec-4b69-932b-d3ee53d633ee",
+      "name": "IfImage"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        5920,
+        3300
+      ],
+      "id": "9f85b7a3-6280-43fc-9542-3377902e626c",
+      "name": "câu hỏi có ảnh"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data.message.text }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Chuyển đoạn nội dung dưới đây thành mảng JSON theo format: [{ \"nd\", \"image\": [\"url1\", \"url2\"] }] với mỗi mục, \"image\" là mảng chứa link các ảnh trong mục đó. Bỏ qua định dạng Markdown, chỉ lấy nội dung và link ảnh."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        6140,
+        3300
+      ],
+      "id": "08127c4e-1cea-49fa-93d1-555032395750",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        6120,
+        3520
+      ],
+      "id": "4d141487-5c7f-437b-9242-c2d4f663a6eb",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3DktBr4cKLLJgYj1",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"nd\": \"\",\n\t\"image\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        6340,
+        3540
+      ],
+      "id": "53db322c-7d61-4989-9e3f-d27d7a3e1a99",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v23.0/783233704876382/messages/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAkttpAZAZBu4BPrQTmZAo72efyUhqLiPZC1HvUM7cnT1cjMpb6z1TCRWxi95xwgZCIbG9c807K9ZAFOYODZAv1ueLZB10yZBu0LDx5CodaxU6tHeB779HVBN5FmbNcGrVxtkmjtvHY1N3uHKt82JlAj8gtCoAIMIRQgYp3cMKiIlMfeOP7sdEuFHbVmEUxtl6sMa6Q5oy46M99ifT8E3AXniKEymxgkwJgofPvttl9gaZC78ZD"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_type\": \"RESPONSE\",\n  \"recipient\": { \"id\": \"{{ $('câu hỏi có ảnh').item.json.data.recipient.id }}\" },\n  \"message\": { \"text\": \"{{ $('Basic LLM Chain').item.json.output.nd }}\" }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6800,
+        1660
+      ],
+      "id": "e6ba47f2-0a48-4a80-9998-e94fa68ca9aa",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Basic LLM Chain').item.json.output.image }}",
+                    "rightValue": "https?://(?:drive\\.google\\.com|docs\\.google\\.com)/[^\\s\"']+",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    },
+                    "id": "ba153119-2b81-4571-9adc-83c1ce585ce0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "driver"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        6600,
+        3300
+      ],
+      "id": "4d48a790-57a8-4535-be8b-04710bf0c4d4",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d8f5f38-cdfd-47c0-8d19-286eefbb820e",
+              "name": "chat",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "824a251d-85af-4bbb-86e3-374674c53a5d",
+              "name": "type",
+              "value": "jpg",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5060,
+        2440
+      ],
+      "id": "ccde7223-e92b-4c93-a151-b2155da2515c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9b00ad57-dd39-42f8-94d3-d32bbf8b72a2",
+              "leftValue": "={{ $json.exists}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        40,
+        1580
+      ],
+      "id": "93355d22-45f0-4b03-b30e-c3264a758fbc",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v23.0/783233704876382/messages/\n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAkttpAZAZBu4BPkYmTNDQEgi188XZCRRSeuisCpGtv8KJoN1tcnyrv7cz2PGIzvDMgxlXJ4bg9v1bgEZClUgnv18VtK1q8xKWvvFDsitEaqUfYY119o2nzFpbNJZBi0uyGcBOeSZCkRDJlT1hHiYz1w6rtiUqW8tqN4owJZAdIGvzZCoJfNdYCEql2tZC4l1m53GP9sw"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        1880
+      ],
+      "id": "d80a54a3-b544-4748-ad21-b33c9ad694ba",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT EXISTS (\n  SELECT 1 FROM users WHERE user_id = {{ $json['id user'] }}\n) AS \"exists\";\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -200,
+        1580
+      ],
+      "id": "a7302055-2bed-4fc7-bfaf-fba6aaa2434d",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO users (user_id, \"created_at\")\nVALUES ({{ $('Messenger').item.json.body.entry[0].messaging[0].sender.id }}, NOW());\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        340,
+        1880
+      ],
+      "id": "1ac14562-ea11-46f9-9b93-ab394db5b7b5",
+      "name": "Postgres1",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8e351a53-6290-48bd-996e-3ddef789636a",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        1560
+      ],
+      "id": "5b84b6ab-7462-4c57-a987-3d5e22e2f51e",
+      "name": "If4",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('None Refresh').item.json['tin nhắn'] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1860,
+        2020
+      ],
+      "id": "ef11b1d9-70d2-4794-a5b0-f868b3c69cde",
+      "name": "Postgres Chat Memory1",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json['tin nhắn'] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        2260,
+        1440
+      ],
+      "id": "2839597d-4af7-4b18-a63d-a472e41e8ba8",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1QqpHTgDt-5qF8a29wuXDmthmZZCQXidLSzvBlTTdehs/edit?tab=t.0",
+        "simple": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Simplify', ``, 'boolean') }}"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        2600,
+        1440
+      ],
+      "id": "ae3a96dc-d743-42ad-aeb7-477b89c9926b",
+      "name": "Update data",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "Gc3QzQZ7HenXzkoo",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-preview-05-20",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2100,
+        1440
+      ],
+      "id": "ad5d81e3-969f-4d51-81a1-ae1172264935",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3DktBr4cKLLJgYj1",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM n8n_chat_histories\nWHERE session_id = '{{ $('If1').item.json.body.entry[0].messaging[0].sender.id }}'\nORDER BY created_at DESC\nLIMIT 5;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1300,
+        1660
+      ],
+      "id": "52f91506-b114-48c1-9687-4454938721ba",
+      "name": "Postgres3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM n8n_chat_histories\nWHERE session_id = '{{ $('If1').item.json.body.entry[0].messaging[0].sender.id }}'\nORDER BY created_at DESC\nLIMIT 5;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1420,
+        1380
+      ],
+      "id": "1ebe6ba5-39c7-42e4-bf2c-0040a8f59fc6",
+      "name": "Check messages",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1RBZBCD_9JQa83TIGfADDLFY6-lvIwurGHwqzwbv8Zgw/edit?gid=638972830#gid=638972830",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 638972830,
+          "mode": "list",
+          "cachedResultName": "RAGimage",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RBZBCD_9JQa83TIGfADDLFY6-lvIwurGHwqzwbv8Zgw/edit#gid=638972830"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        2800,
+        2020
+      ],
+      "id": "d10f99cd-ea5b-45ac-a64f-ad05d9aea447",
+      "name": "Image data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4XtORXeXaUjmk9PY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "facebook_chat_histories",
+          "mode": "list",
+          "cachedResultName": "facebook_chat_histories"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "user_id": "={{ $('Messenger').item.json.body.entry[0].messaging[0].sender.id }}",
+            "recipient_id": "={{ $('Messenger').item.json.body.entry[0].messaging[0].recipient.id }}",
+            "message_id": "={{ $('Messenger').item.json.body.entry[0].messaging[0].message.mid }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "recipient_id",
+              "displayName": "recipient_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        760,
+        1580
+      ],
+      "id": "1b737a5d-4a19-41da-b64e-cbadde4f6961",
+      "name": "Insert to history messages",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM facebook_chat_histories\nWHERE message_id = '{{ $('If1').item.json.body.entry[0].messaging[0].message.mid }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        340,
+        1560
+      ],
+      "id": "b00affcd-c41b-40d9-bafb-9ba367341bd4",
+      "name": "Postgres2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const recipientId = $('If1').first().json.body.entry[0].messaging[0].sender.id;\n\nreturn [\n  {\n    json: {\n      data: {\n        recipient: { id: recipientId },\n        message: { \n          text: `Chào bạn, mình là RADI — trợ lý luyện thi GPLX của bạn! 🚗✨\n\nMình giúp bạn:\n• Luyện 600 câu hỏi sát hạch theo 6 chương.\n• Thi thử mô phỏng (30/35 câu, có đếm thời gian).\n• Giải thích đáp án, mẹo ghi nhớ, đánh dấu câu liệt.\n• Tra cứu biển báo & sa hình kèm hình minh hoạ.\n• Theo dõi tiến độ và điểm gần nhất.\n\nBạn muốn bắt đầu như thế nào?\n• Gõ \"Bắt đầu\" để chọn hạng (A1/B1/B2…)\n• Gõ \"Luyện chương 1\" hoặc \"Thi thử\"\n• Gõ \"Câu 37\" hoặc \"Ảnh 37\" để xem hình câu 37 (nếu có)\n• Gõ \"Tra cứu biển cấm rẽ trái\" hay \"Biển P.123\"\n\nMẹo:\n• Bạn có thể gửi ảnh câu hỏi, RADI sẽ nhận diện và giải đáp.\n• Muốn học theo chủ đề: \"Câu liệt\", \"Biển báo nguy hiểm\", …\n\nSẵn sàng chưa? Cùng tăng điểm lý thuyết nào! 🛣️📘`\n        }\n      }\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        600,
+        1880
+      ],
+      "id": "5d0e1d90-1b14-4077-8515-47743cd892be",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1IjnGbmZVhYjkAFebN2woYzKN-v-A6jc6Ade9S-5_1as/edit?tab=t.0",
+        "simple": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Simplify', ``, 'boolean') }}"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        2020
+      ],
+      "id": "4a8c9ffa-2388-4129-badb-88cd1b9e0b74",
+      "name": "RADI knowlegde",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "Gc3QzQZ7HenXzkoo",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM questions",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        1980,
+        2020
+      ],
+      "id": "e81028f2-c185-4cff-9640-e21e22ac5ddd",
+      "name": "questions",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM chapters",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        2260,
+        2020
+      ],
+      "id": "9bdda09c-46fd-4651-90f7-b87140b9aa35",
+      "name": "chapters",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM keys",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        2380,
+        2020
+      ],
+      "id": "d2b2436c-5c0e-4c9f-aa0d-1820902dfeb2",
+      "name": "keys",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = {\n  \"recipient\":{\n    \"id\": `${$('Messenger').first().json.body.entry[0].messaging[0].sender.id}`\n  },\n  \"message\":{\n    \"text\": `${$input.first().json.output}`\n  }\n}\n    return{data:body}\n\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5700,
+        3280
+      ],
+      "id": "b45f21a0-83bb-4467-871d-c73a9f53a459",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        5460,
+        2440
+      ],
+      "id": "6ad21ac1-3bb6-4563-918b-e21d9a47c5ad",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v23.0/783233704876382/messages/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAkttpAZAZBu4BPkYmTNDQEgi188XZCRRSeuisCpGtv8KJoN1tcnyrv7cz2PGIzvDMgxlXJ4bg9v1bgEZClUgnv18VtK1q8xKWvvFDsitEaqUfYY119o2nzFpbNJZBi0uyGcBOeSZCkRDJlT1hHiYz1w6rtiUqW8tqN4owJZAdIGvzZCoJfNdYCEql2tZC4l1m53GP9sw"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({ messaging_type: \"RESPONSE\", recipient: { id: String($('Messenger').item.json.body.entry[0].messaging[0].sender.id) }, message: { text: String($json.chat ?? '') } }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5880,
+        2460
+      ],
+      "id": "cc9df651-c730-4a0c-9bca-883837e619d0",
+      "name": "HTTP Request5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['tin nhắn'] }}",
+        "options": {
+          "systemMessage": "=#Role\nrole: assistant\nname: Radi chatbot\ndescription:\n- You are an AI chatbot that specializes in supporting students in learning driving theory in Vietnamese.\n\n#TOOL\ntools:\nname: Interaction Rules1\ndescription:\n- This file contains details on how to communicate with the user as a driving theory learning assistant and process human natural language. Must call when execute workflow.\n\nname: RADI knowledge\ndescription:\n- This file contains driving knowledge. Must call when execute workflow.\n\nname: Image data\ndescription:\n- This sheet contains image for question\n- The first column is the question, the second column is the image_url of that question, if the image_url is empty then that question has no image. Must call when execute workflow.\n\nname: questions\ndescription:\n- This database contains question_id, content, key_id, bool_liet, and chapter_id which are used to create question for user. Must call when execute workflow\n\nname: chapters\ndescription:\n- This database contains chapter_id, and content.\n\nname: user_questions\ndescription:\n- This database is the previous content that given to the user.\n\nname: keys\ndescription:\n- This database contains answers, use user_questions database to check the questions content and give the answer. Must call when execute workflow.\n\n#TRIGGER KEYWORDS\nTrigger Phrases:\n“câu ngẫu nhiên”\n“ok”\n“cho tôi”\n“bộ đề”\n“câu trả lời”\n“đáp án”\n“câu khác” \n\"1\"\n\"2\"\n\"3\"\n\"4\"\n\"câu có hình\"\n\"theo hạng A1\"\n\"theo hạng A\"\n\"theo hạng B1\"\n\"theo hạng B\"\n\"theo hạng C\"\n\"theo hạng D\"\n\"theo hạng E\"\n\"theo hạng F\"\n\"câu số\"\n\n#Response rules\nbehavior:\n- Must always call Interaction Rules1, RADI knowledge, questions, keys, chapters, user_questions, and Image data tool at any time to get information to respond to users.\n- Always call tool questions when answering users.\n- Every time you want to ask a question, you must call questions database (priority).\n- When a question has an image, return image_url, otherwise leave it blank.\n- Do not fabricate or misname questions or keys, images link.\n- If the user answers unrelated to driving theory -> reply: \" Mình là trợ lý AI hỗ trợ học lý thuyết lái xe, hiện tại mình chỉ hỗ trợ trong khoảng thời gian này thôi, nếu bạn có câu hỏi gì liên quan về lý thuyết lái xe thì cứ hỏi mình nhé\".\n\n#Check Answer\n- When the user give the answer, must call keys database to check for correct answer, must rely on question content from user_questions database to find answer in keys databaser. Must call user_questions database to retrieve question content that are given to user.\n- If user do an exam simulation, please check the questions where bool_liet = TRUE as question \"liệt\".\n- If user answer correctly, give a praise in Vietnamese.\n- If user answer incorrectly, show the correct answer from keys database and give an short explanation.\n\n#Question format\n- When the user ask to give random question or Exam Simulation, please follow:\nRandom Question Format: \nFor example:\n“Câu 36. Khi gặp hiệu lệnh điều khiển của Cảnh sát giao thông như hình dưới đây thì người tham gia giao thông đường bộ phải đi như thế nào là đúng quy tắc giao thông?\n\n1. Người tham gia giao thông đường bộ ở các hướng phải dừng lại.\n2. Người tham gia giao thông đường bộ ở các hướng được đi theo chiều gậy chỉ của Cảnh sát giao thông.\n3. Người tham gia giao thông đường bộ ở phía trước và phía sau người điều khiển được đi tất cả các hướng; người tham gia giao thông đường bộ ở phía bên phải và phía bên trái người điều khiển phải dừng lại.\n4. Người tham gia giao thông đường bộ ở phía trước và phía sau người điều khiển phải dừng lại; người tham gia giao thông đường bộ ở phía bên phải và phía bên trái người điều khiển được đi tất cả các hướng.\n\nBạn chọn đáp án nào?\"\n\nExam Simulation Format: There will be 3 different exam simulation which are A1/A/B1 (25 questions) at least correct 21/25 questions and no wrong question \"liệt\" take from bool_liet to pass, B (35 questions) at least correct 32/35 questions and no wrong question \"liệt\" to pass, C,D,E,F (40 questions) at least correct 37/40 questions and no wrong question \"liệt\" to pass. If the user answer wrong the question that in questions database with bool_liet column = TRUE, the user will be automatically fail the exam no matter they score high.\n- Exam format: for each exam simulation, for example A1/A/B1 which has 25 questions total including one question \"liệt\". When the user asked to give them A1/A/B1 exam simulation, please follow the instruction:\nInstruction:\nGive the user question 1/25 which pick random from questions database, erase the question number which is \"câu + number\", only remain câu 1/25.\n- If user answer correctly, give a praise in Vietnamese.\n- If user answer incorrectly, show the correct answer from keys database and give an short explanation.\nThen continue give the user question 2/25 (must let user see \"câu 2/25\"), which pick random from questions database.\nThen continue 3/25 ... 4/25 ... 25/25 with exactly.\nFor example format:\n\n\"\"\"Câu 1/25\n\nKhi gặp hiệu lệnh điều khiển của Cảnh sát giao thông như hình mô tả, người tham gia giao thông phải đi như thế nào là đúng quy tắc?\n\n1. Người tham gia giao thông đường bộ ở các hướng phải dừng lại.\n\n2. Người tham gia giao thông đường bộ ở các hướng được đi theo chiều gậy chỉ của Cảnh sát giao thông.\n\n3. Người tham gia giao thông đường bộ ở phía trước và phía sau người điều khiển được đi tất cả các hướng; người tham gia giao thông đường bộ ở phía bên phải và phía bên trái người điều khiển phải dừng lại.\n\n4. Người tham gia giao thông đường bộ ở phía trước và phía sau người điều khiển phải dừng lại; người tham gia giao thông đường bộ ở phía bên phải và phía bên trái người điều khiển được đi tất cả các hướng.\n\nCâu 2/25\n\nKhi Cảnh sát giao thông giơ một tay thẳng đứng, người tham gia giao thông phải làm gì?\n\n1. Xe phía trước được đi, phía sau dừng.\n\n2. Tất cả các hướng phải dừng lại.\n\n3. Chỉ xe rẽ phải được đi.\n\n4. Chỉ người đi bộ được đi.\n\n............\n\nCâu 25/25\n\nNgười ngồi trên ô tô phải thắt dây an toàn khi:\n\n1. Chỉ khi xe chạy đường cao tốc.\n\n2. Chỉ người lái cần thắt.\n\n3. Tất cả vị trí có dây an toàn đều phải thắt khi xe đang chạy.\n\n4. Không bắt buộc nếu đi chậm.\"\"\"\n\nAfter finished the exam simulation, give the user the total correct point out of 25 \n- If the user do wrong one question \"liệt\", tell them they have fail the exam.\n- If the user don't get minimum number of correct answers / 25. Tell them they have fail the exam.\n- If the user get minimum number of correct answers / 25 and no wrong question \"liệt\", give them a praise in Vietnamese.\n\n#Response format\nresponse style:\n- Friendly reply. short, in Vietnamese.\n- When the user give the answer, must call keys database to get answer.\n- If the question has image, use image data tool to search and output the image link, for example: câu 36, https://drive.google.com/file/d/1RLNqrf2tIEhEUf50RBpjTIaL2JLywsfd/view?usp=drive_link\n\n# IMAGE HANDLING\nimage_handling:\n- Never show an image if the question doesn't contain an image.\n- only show `data[\"image\"]` if the question has an image_url.\n- Do not create fake images or image links.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        2340,
+        1680
+      ],
+      "id": "5d3e1b41-7f45-419f-96f9-07cf78e6097f",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "user_questions",
+          "mode": "list",
+          "cachedResultName": "user_questions"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content": "={{ $json.data.message.text }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4680,
+        1440
+      ],
+      "id": "ac2d95ac-1087-44df-b897-f6e334d8e96e",
+      "name": "Lưu questions",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "user_questions",
+          "mode": "list",
+          "cachedResultName": "user_questions"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        2120,
+        2020
+      ],
+      "id": "391fc043-ee13-4065-abc4-71f08cf61f61",
+      "name": "user_questions",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v23.0/783233704876382/messages/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAkttpAZAZBu4BPkYmTNDQEgi188XZCRRSeuisCpGtv8KJoN1tcnyrv7cz2PGIzvDMgxlXJ4bg9v1bgEZClUgnv18VtK1q8xKWvvFDsitEaqUfYY119o2nzFpbNJZBi0uyGcBOeSZCkRDJlT1hHiYz1w6rtiUqW8tqN4owJZAdIGvzZCoJfNdYCEql2tZC4l1m53GP9sw"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({ messaging_type: \"RESPONSE\", recipient: { id: String($('Messenger').item.json.body.entry[0].messaging[0].sender.id) }, message: { text: String($json.content) } }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4960,
+        2060
+      ],
+      "id": "c0999db9-886a-4b55-af26-e09872eb248f",
+      "name": "HTTP Request6"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4420,
+        2040
+      ],
+      "id": "906814d7-1216-4c56-b0e8-3eca9940a701",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = {\n  \"recipient\":{\n    \"id\": `${$('Messenger').first().json.body.entry[0].messaging[0].sender.id}`\n  },\n  \"message\":{\n    \"text\": `${$input.first().json.output}`\n  }\n}\n    return{data:body}\n\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4000,
+        2060
+      ],
+      "id": "bd0deeb5-b9a1-48a7-9a24-02bc26fb36bc",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "user_questions",
+          "mode": "list",
+          "cachedResultName": "user_questions"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content": "={{ $json.data.message.text }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4700,
+        2060
+      ],
+      "id": "cf2ecfab-34ea-4487-b5c4-fa2492f3150e",
+      "name": "Lưu questions1",
+      "credentials": {
+        "postgres": {
+          "id": "uW2OZ7dMHpPXj2wR",
+          "name": "Postgres account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4b6fa925-b015-4060-8bd6-aa63261ab8d5",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "https?://[^\\s\"']+",
+              "operator": {
+                "type": "string",
+                "operation": "notRegex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3340,
+        2080
+      ],
+      "id": "a9d9bc9a-b0f4-4e51-bb52-c9618fcd9ae1",
+      "name": "IfImage2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        6120,
+        3780
+      ],
+      "id": "7f0a769f-1b8e-401f-b006-2474d345260a",
+      "name": "câu hỏi có ảnh1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data.message.text }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Chuyển đoạn nội dung dưới đây thành mảng JSON theo format: [{ \"nd\", \"image\": [\"url1\", \"url2\"] }] với mỗi mục, \"image\" là mảng chứa link các ảnh trong mục đó. Bỏ qua định dạng Markdown, chỉ lấy nội dung và link ảnh."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        6380,
+        3780
+      ],
+      "id": "a9cfdfa6-f424-43f6-9389-3d5702aa1d80",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        6320,
+        3960
+      ],
+      "id": "d31c9952-ee6f-4e9b-b49c-54cf8732f94c",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3DktBr4cKLLJgYj1",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"nd\": \"\",\n\t\"image\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        6580,
+        3980
+      ],
+      "id": "2265952f-5a54-4909-b60c-4aef0a0a14fa",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Basic LLM Chain1').item.json.output.image }}",
+                    "rightValue": "https?://(?:drive\\.google\\.com|docs\\.google\\.com)/[^\\s\"']+",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    },
+                    "id": "ba153119-2b81-4571-9adc-83c1ce585ce0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "driver"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        6760,
+        3780
+      ],
+      "id": "ba6be71c-cb7c-4547-9626-0be74e498ad6",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v23.0/783233704876382/messages/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAkttpAZAZBu4BPkYmTNDQEgi188XZCRRSeuisCpGtv8KJoN1tcnyrv7cz2PGIzvDMgxlXJ4bg9v1bgEZClUgnv18VtK1q8xKWvvFDsitEaqUfYY119o2nzFpbNJZBi0uyGcBOeSZCkRDJlT1hHiYz1w6rtiUqW8tqN4owJZAdIGvzZCoJfNdYCEql2tZC4l1m53GP9sw"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "data",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "recipient",
+              "value": "={{ JSON.stringify({ id: String($json.recipient_id) }) }}\n"
+            },
+            {
+              "name": "image",
+              "value": "={\n  \"messaging_type\": \"RESPONSE\",\n  \"recipient\": { \"id\": \"={{ $('Messenger').item.json.body.entry[0].messaging[0].sender.id }}\" },\n  \"message\": {\n    \"attachment\": {\n      \"type\": \"image\",\n      \"payload\": {\n        \"url\": \"={{ $('Edit Fields1').item.json.image }}\",\n        \"is_reusable\": true\n      }\n    }\n  }\n}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        7020,
+        2040
+      ],
+      "id": "24993c1d-bf7d-4122-8018-855c9b650095",
+      "name": "HTTP Request7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "12c08046-d285-4d3f-af4f-5cb690654d89",
+              "name": "image",
+              "value": "={{ $json.output.image }}",
+              "type": "string"
+            },
+            {
+              "id": "9d8f5f38-cdfd-47c0-8d19-286eefbb820e",
+              "name": "chat",
+              "value": "={{ $('câu hỏi có ảnh').item.json.data.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "824a251d-85af-4bbb-86e3-374674c53a5d",
+              "name": "type",
+              "value": "jpg",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5220,
+        1720
+      ],
+      "id": "65ce1f04-14ee-4ae3-b041-b9de5b5a6292",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = {\n  \"recipient\":{\n    \"id\": `${$('Messenger').first().json.body.entry[0].messaging[0].sender.id}`\n  },\n  \"message\":{\n    \"text\": `${$input.first().json.output[0].text}`\n  }\n}\n    return{data:body}\n\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5800,
+        3780
+      ],
+      "id": "d2356e44-d68c-4648-99e0-a7622c181255",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        5520,
+        1720
+      ],
+      "id": "03012804-e3ea-49fd-a9a9-618931ee8c78",
+      "name": "Loop Over Items4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v23.0/783233704876382/messages/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAkttpAZAZBu4BPkYmTNDQEgi188XZCRRSeuisCpGtv8KJoN1tcnyrv7cz2PGIzvDMgxlXJ4bg9v1bgEZClUgnv18VtK1q8xKWvvFDsitEaqUfYY119o2nzFpbNJZBi0uyGcBOeSZCkRDJlT1hHiYz1w6rtiUqW8tqN4owJZAdIGvzZCoJfNdYCEql2tZC4l1m53GP9sw"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({ messaging_type: \"RESPONSE\", recipient: { id: String($('Messenger').item.json.body.entry[0].messaging[0].sender.id) }, message: { text: String($json.chat ?? '') } }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5760,
+        1740
+      ],
+      "id": "86affcbd-fb38-4513-96a4-c06c233c54aa",
+      "name": "HTTP Request8"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Basic LLM Chain1').item.json.output.image }}",
+          "mode": "url"
+        },
+        "options": {
+          "fileName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        7160,
+        1540
+      ],
+      "id": "1f9b6276-e8fc-4969-8041-458a9f6b08b7",
+      "name": "Down ảnh1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "n3jbskRQ4YaoYCHR",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4b6fa925-b015-4060-8bd6-aa63261ab8d5",
+              "leftValue": "={{ $json.output[0].text }}",
+              "rightValue": "https?://[^\\s\"']+",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3040,
+        1760
+      ],
+      "id": "f1c422cd-4756-4df7-970d-437c2b01d327",
+      "name": "IfObject"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nitems.sort((a,b) => {\n    const nameA = a.json.name.toLowerCase();\n    const nameB = b.json.name.toLowerCase();\n  return nameA.localeCompare(nameB, undefined, {numeric: true});\n});\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6740,
+        2380
+      ],
+      "id": "c110e098-48dd-44d2-b593-681344c2c226",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v23.0/783233704876382/messages/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAkttpAZAZBu4BPkYmTNDQEgi188XZCRRSeuisCpGtv8KJoN1tcnyrv7cz2PGIzvDMgxlXJ4bg9v1bgEZClUgnv18VtK1q8xKWvvFDsitEaqUfYY119o2nzFpbNJZBi0uyGcBOeSZCkRDJlT1hHiYz1w6rtiUqW8tqN4owJZAdIGvzZCoJfNdYCEql2tZC4l1m53GP9sw"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "data",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "messages"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6980,
+        2440
+      ],
+      "id": "8663b467-2454-4a64-a07e-e0e25d03b351",
+      "name": "gửi ảnh"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.image }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        6520,
+        2420
+      ],
+      "id": "118fffa4-f00b-459d-9afb-a0087bb2a2cf",
+      "name": "down ảnh",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "n3jbskRQ4YaoYCHR",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v23.0/783233704876382/messages/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAkttpAZAZBu4BPkYmTNDQEgi188XZCRRSeuisCpGtv8KJoN1tcnyrv7cz2PGIzvDMgxlXJ4bg9v1bgEZClUgnv18VtK1q8xKWvvFDsitEaqUfYY119o2nzFpbNJZBi0uyGcBOeSZCkRDJlT1hHiYz1w6rtiUqW8tqN4owJZAdIGvzZCoJfNdYCEql2tZC4l1m53GP9sw"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({ messaging_type: \"RESPONSE\", recipient: { id: String($('Messenger').item.json.body.entry[0].messaging[0].sender.id) }, message: { text: String($json.image ?? '') } }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        7220,
+        2400
+      ],
+      "id": "0d28f3cb-accd-4bd4-95b1-b348ac76ec11",
+      "name": "gửi file ảnh"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Messenger": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Lưu questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cập nhật dữ liệu": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refresh": {
+      "main": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "None Refresh": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Check messages",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Postgres3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interaction Rules1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IfImage": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "câu hỏi có ảnh": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Postgres2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Postgres1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Insert to history messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres3": {
+      "main": [
+        [
+          {
+            "node": "None Refresh",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check messages": {
+      "main": [
+        [
+          {
+            "node": "Refresh",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert to history messages": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres2": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RADI knowlegde": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "questions": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "chapters": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "keys": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "câu hỏi có ảnh",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "IfObject",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lưu questions": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "user_questions": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Lưu questions1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lưu questions1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IfImage2": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "câu hỏi có ảnh1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request7": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "câu hỏi có ảnh1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items4": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request8": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Down ảnh1": {
+      "main": [
+        []
+      ]
+    },
+    "IfObject": {
+      "main": [
+        [
+          {
+            "node": "IfImage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IfImage2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        []
+      ]
+    },
+    "gửi ảnh": {
+      "main": [
+        []
+      ]
+    },
+    "down ảnh": {
+      "main": [
+        []
+      ]
+    },
+    "gửi file ảnh": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "70ed43cf-4f67-4536-ba00-cea1a93df901",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "cEoiudkIpfQRHp2e",
+  "tags": []
+}
